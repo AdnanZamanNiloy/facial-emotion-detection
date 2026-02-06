@@ -2,8 +2,10 @@
 Configuration settings for the Emotion Detection application.
 """
 import os
+import json
 from pathlib import Path
 from pydantic_settings import BaseSettings
+from typing import List
 
 
 class Settings(BaseSettings):
@@ -18,12 +20,19 @@ class Settings(BaseSettings):
     HOST: str = "0.0.0.0"
     PORT: int = 8000
     
-    # CORS
-    ALLOWED_ORIGINS: list = [
-        "http://localhost:3000",
-        "http://127.0.0.1:3000",
-        "https://localhost:3000",
-    ]
+    # CORS - Now loads from environment variable or uses defaults
+    ALLOWED_ORIGINS: str = '["http://localhost:3000","http://127.0.0.1:3000","https://localhost:3000","https://facial-emotion-detection-beta.vercel.app"]'
+    
+    @property
+    def cors_origins(self) -> List[str]:
+        """Parse ALLOWED_ORIGINS from string or return as list."""
+        if isinstance(self.ALLOWED_ORIGINS, str):
+            try:
+                return json.loads(self.ALLOWED_ORIGINS)
+            except json.JSONDecodeError:
+                # Fallback: split by comma
+                return [origin.strip() for origin in self.ALLOWED_ORIGINS.split(',')]
+        return self.ALLOWED_ORIGINS
     
     # Model
     MODEL_PATH: str = "models/emotion_model.pth"
