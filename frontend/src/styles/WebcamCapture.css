@@ -1,11 +1,11 @@
 /**
- * WebcamCapture Component Styles
+ * Advanced WebcamCapture Component - Professional Design
  */
 
 .webcam-container {
   display: flex;
   flex-direction: column;
-  gap: 1rem;
+  gap: 1.25rem;
 }
 
 .video-wrapper {
@@ -13,9 +13,18 @@
   width: 100%;
   aspect-ratio: 4/3;
   background: #000;
-  border-radius: 0.75rem;
+  border-radius: 1.25rem;
   overflow: hidden;
-  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.3);
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.4), 
+              0 0 0 1px rgba(255, 255, 255, 0.1);
+  transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.video-wrapper:hover {
+  box-shadow: 0 12px 48px rgba(0, 0, 0, 0.5), 
+              0 0 0 1px rgba(99, 102, 241, 0.3),
+              0 0 40px rgba(99, 102, 241, 0.2);
+  transform: translateY(-2px);
 }
 
 .webcam-video {
@@ -23,7 +32,8 @@
   height: 100%;
   object-fit: cover;
   opacity: 0;
-  transition: opacity 0.3s ease;
+  transition: opacity 0.5s ease;
+  transform: scaleX(-1); /* Mirror effect */
 }
 
 .webcam-video.active {
@@ -37,27 +47,34 @@
   transform: translate(-50%, -50%);
   text-align: center;
   color: white;
+  z-index: 10;
 }
 
 .spinner {
-  width: 50px;
-  height: 50px;
-  border: 4px solid rgba(255, 255, 255, 0.3);
-  border-top-color: #6366f1;
-  border-radius: 50%;
+  width: 60px;
+  height: 60px;
+  margin: 0 auto 1.5rem;
+  color: #6366f1;
+}
+
+.spin-animation {
   animation: spin 1s linear infinite;
-  margin: 0 auto 1rem;
 }
 
 @keyframes spin {
-  to {
-    transform: rotate(360deg);
-  }
+  to { transform: rotate(360deg); }
 }
 
 .webcam-loading p {
-  font-size: 1rem;
-  color: rgba(255, 255, 255, 0.8);
+  font-size: 1.05rem;
+  font-weight: 500;
+  color: rgba(255, 255, 255, 0.9);
+  animation: pulse 2s ease-in-out infinite;
+}
+
+@keyframes pulse {
+  0%, 100% { opacity: 0.9; }
+  50% { opacity: 0.5; }
 }
 
 .webcam-error {
@@ -67,75 +84,168 @@
   transform: translate(-50%, -50%);
   text-align: center;
   color: white;
-  padding: 2rem;
+  padding: 2.5rem;
   max-width: 90%;
+  z-index: 10;
+  background: rgba(0, 0, 0, 0.6);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  border-radius: 1rem;
+  border: 1px solid rgba(239, 68, 68, 0.3);
 }
 
 .webcam-error p {
-  margin-bottom: 1rem;
-  font-size: 1rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 1.5rem;
+  font-size: 1.05rem;
+  font-weight: 500;
   color: #fca5a5;
+  line-height: 1.6;
 }
 
 .retry-button {
-  padding: 0.75rem 1.5rem;
-  background: #6366f1;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.875rem 2rem;
+  background: linear-gradient(135deg, #6366f1 0%, #4f46e5 100%);
   color: white;
-  border: none;
-  border-radius: 0.5rem;
-  font-weight: 600;
+  border: 2px solid rgba(99, 102, 241, 0.3);
+  border-radius: 0.75rem;
+  font-weight: 700;
+  font-size: 0.95rem;
   cursor: pointer;
-  transition: all 0.2s;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  position: relative;
+  overflow: hidden;
+}
+
+.retry-button::before {
+  content: '';
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 0;
+  height: 0;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.2);
+  transform: translate(-50%, -50%);
+  transition: width 0.6s, height 0.6s;
+}
+
+.retry-button:hover::before {
+  width: 300px;
+  height: 300px;
 }
 
 .retry-button:hover {
-  background: #4f46e5;
+  background: linear-gradient(135deg, #4f46e5 0%, #4338ca 100%);
   transform: translateY(-2px);
+  box-shadow: 0 8px 24px rgba(99, 102, 241, 0.4);
+  border-color: rgba(99, 102, 241, 0.6);
+}
+
+.retry-button:active {
+  transform: translateY(0);
 }
 
 .webcam-indicator {
   display: flex;
   align-items: center;
   justify-content: center;
-  gap: 0.5rem;
-  padding: 0.5rem 1rem;
-  background: rgba(15, 23, 42, 0.8);
-  border-radius: 0.5rem;
-  font-size: 0.9rem;
+  gap: 0.75rem;
+  padding: 0.75rem 1.25rem;
+  background: rgba(0, 0, 0, 0.6);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  border-radius: 0.75rem;
+  font-size: 0.95rem;
+  font-weight: 600;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  transition: all 0.3s ease;
+}
+
+.webcam-indicator:hover {
+  background: rgba(0, 0, 0, 0.7);
+  border-color: rgba(255, 255, 255, 0.2);
 }
 
 .indicator-dot {
-  width: 10px;
-  height: 10px;
+  width: 12px;
+  height: 12px;
   border-radius: 50%;
   background: #64748b;
-  animation: pulse 2s ease-in-out infinite;
+  animation: dotPulse 2s ease-in-out infinite;
+  box-shadow: 0 0 0 0 rgba(100, 116, 139, 0.5);
+  transition: all 0.3s ease;
 }
 
 .indicator-dot.active {
   background: #10b981;
+  box-shadow: 0 0 0 4px rgba(16, 185, 129, 0.2),
+              0 0 20px rgba(16, 185, 129, 0.4);
+  animation: activeDotPulse 2s ease-in-out infinite;
 }
 
-@keyframes pulse {
-  0%, 100% {
-    opacity: 1;
+@keyframes dotPulse {
+  0%, 100% { opacity: 1; transform: scale(1); }
+  50% { opacity: 0.5; transform: scale(0.9); }
+}
+
+@keyframes activeDotPulse {
+  0%, 100% { 
+    box-shadow: 0 0 0 0 rgba(16, 185, 129, 0.4),
+                0 0 20px rgba(16, 185, 129, 0.4);
   }
-  50% {
-    opacity: 0.5;
+  50% { 
+    box-shadow: 0 0 0 6px rgba(16, 185, 129, 0),
+                0 0 30px rgba(16, 185, 129, 0.6);
   }
 }
 
 /* Responsive */
-@media (max-width: 640px) {
+@media (max-width: 768px) {
   .video-wrapper {
     aspect-ratio: 3/4;
+    border-radius: 1rem;
   }
   
   .webcam-error {
-    padding: 1rem;
+    padding: 2rem 1.5rem;
   }
   
   .webcam-error p {
+    font-size: 0.95rem;
+  }
+  
+  .retry-button {
+    padding: 0.75rem 1.75rem;
     font-size: 0.9rem;
+  }
+  
+  .spinner {
+    width: 50px;
+    height: 50px;
+  }
+  
+  .spinner::after {
+    width: 32px;
+    height: 32px;
+  }
+}
+
+@media (max-width: 480px) {
+  .webcam-indicator {
+    font-size: 0.85rem;
+    padding: 0.6rem 1rem;
+  }
+  
+  .indicator-dot {
+    width: 10px;
+    height: 10px;
   }
 }

@@ -3,17 +3,18 @@
  * Displays detected emotion and confidence scores
  */
 import React from 'react';
+import { Smile, Frown, Angry, Zap, Ghost, Annoyed, Meh, User } from 'lucide-react';
 import '../styles/EmotionDisplay.css';
 
-// Emoji mapping for emotions
-const EMOTION_EMOJIS = {
-  'Happy': '😊',
-  'Sad': '😢',
-  'Angry': '😠',
-  'Surprise': '😲',
-  'Fear': '😨',
-  'Disgust': '🤢',
-  'Neutral': '😐'
+// Icon mapping for emotions (Lucide React)
+const EMOTION_ICONS = {
+  'Happy': Smile,
+  'Sad': Frown,
+  'Angry': Angry,
+  'Surprise': Zap,
+  'Fear': Ghost,
+  'Disgust': Annoyed,
+  'Neutral': Meh
 };
 
 // Color mapping for emotions
@@ -42,7 +43,7 @@ const EmotionDisplay = ({ emotion, confidence, probabilities, processingTime }) 
           {/* Main Emotion */}
           <div className="emotion-main" style={{ borderColor: EMOTION_COLORS[emotion] }}>
             <div className="emotion-emoji" style={{ color: EMOTION_COLORS[emotion] }}>
-              {EMOTION_EMOJIS[emotion]}
+              {React.createElement(EMOTION_ICONS[emotion], { size: 80, strokeWidth: 2 })}
             </div>
             <div className="emotion-label" style={{ color: EMOTION_COLORS[emotion] }}>
               {emotion}
@@ -57,24 +58,29 @@ const EmotionDisplay = ({ emotion, confidence, probabilities, processingTime }) 
             <div className="emotion-probabilities">
               <h3>All Emotions</h3>
               <div className="probability-bars">
-                {sortedEmotions.map(([emotionName, prob]) => (
-                  <div key={emotionName} className="probability-item">
-                    <div className="probability-header">
-                      <span className="probability-emoji">{EMOTION_EMOJIS[emotionName]}</span>
-                      <span className="probability-name">{emotionName}</span>
-                      <span className="probability-value">{(prob * 100).toFixed(1)}%</span>
+                {sortedEmotions.map(([emotionName, prob]) => {
+                  const IconComponent = EMOTION_ICONS[emotionName];
+                  return (
+                    <div key={emotionName} className="probability-item">
+                      <div className="probability-header">
+                        <span className="probability-emoji">
+                          {IconComponent && <IconComponent size={18} />}
+                        </span>
+                        <span className="probability-name">{emotionName}</span>
+                        <span className="probability-value">{(prob * 100).toFixed(1)}%</span>
+                      </div>
+                      <div className="probability-bar-bg">
+                        <div
+                          className="probability-bar-fill"
+                          style={{
+                            width: `${prob * 100}%`,
+                            backgroundColor: EMOTION_COLORS[emotionName]
+                          }}
+                        />
+                      </div>
                     </div>
-                    <div className="probability-bar-bg">
-                      <div
-                        className="probability-bar-fill"
-                        style={{
-                          width: `${prob * 100}%`,
-                          backgroundColor: EMOTION_COLORS[emotionName]
-                        }}
-                      />
-                    </div>
-                  </div>
-                ))}
+                  );
+                })}
               </div>
             </div>
           )}
@@ -88,7 +94,9 @@ const EmotionDisplay = ({ emotion, confidence, probabilities, processingTime }) 
         </>
       ) : (
         <div className="emotion-waiting">
-          <div className="waiting-icon">👤</div>
+          <div className="waiting-icon">
+            <User size={80} strokeWidth={1.5} />
+          </div>
           <p>Waiting for detection...</p>
           <p className="waiting-hint">Make sure your face is visible</p>
         </div>

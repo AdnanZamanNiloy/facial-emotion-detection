@@ -18,7 +18,7 @@ logger = logging.getLogger(__name__)
 class EmotionCNN(nn.Module):
     """
     Convolutional Neural Network for Emotion Recognition.
-    Architecture: 4 Conv blocks + 2 FC layers
+    Architecture: VGG-like with features and classifier blocks
     Input: Grayscale images (1, 48, 48) or RGB (3, 48, 48)
     Output: 7 emotion classes
     """
@@ -26,84 +26,52 @@ class EmotionCNN(nn.Module):
     def __init__(self, num_classes: int = 7, input_channels: int = 1):
         super(EmotionCNN, self).__init__()
         
-        # Convolutional Block 1
-        self.conv1 = nn.Conv2d(input_channels, 64, kernel_size=3, padding=1)
-        self.bn1 = nn.BatchNorm2d(64)
-        self.conv2 = nn.Conv2d(64, 64, kernel_size=3, padding=1)
-        self.bn2 = nn.BatchNorm2d(64)
-        self.pool1 = nn.MaxPool2d(kernel_size=2, stride=2)
-        self.dropout1 = nn.Dropout(0.25)
+        # Feature extraction layers
+        self.features = nn.Sequential(
+            # Block 1
+            nn.Conv2d(input_channels, 64, kernel_size=3, padding=1),  # features.0
+            nn.ReLU(inplace=True),
+            nn.BatchNorm2d(64),  # features.2
+            nn.MaxPool2d(kernel_size=2, stride=2),
+            nn.Dropout(0.25),
+            # Block 2
+            nn.Conv2d(64, 128, kernel_size=5, padding=2),  # features.5 (kernel=5)
+            nn.ReLU(inplace=True),
+            nn.BatchNorm2d(128),  # features.7
+            nn.MaxPool2d(kernel_size=2, stride=2),
+            nn.Dropout(0.25),
+            # Block 3
+            nn.Conv2d(128, 256, kernel_size=3, padding=1),  # features.10
+            nn.ReLU(inplace=True),
+            nn.BatchNorm2d(256),  # features.12
+            nn.MaxPool2d(kernel_size=2, stride=2),
+            nn.Dropout(0.25),
+            # Block 4
+            nn.Conv2d(256, 512, kernel_size=3, padding=1),  # features.15
+            nn.ReLU(inplace=True),
+            nn.BatchNorm2d(512),  # features.17
+            nn.MaxPool2d(kernel_size=2, stride=2),
+            nn.Dropout(0.25),
+        )
         
-        # Convolutional Block 2
-        self.conv3 = nn.Conv2d(64, 128, kernel_size=3, padding=1)
-        self.bn3 = nn.BatchNorm2d(128)
-        self.conv4 = nn.Conv2d(128, 128, kernel_size=3, padding=1)
-        self.bn4 = nn.BatchNorm2d(128)
-        self.pool2 = nn.MaxPool2d(kernel_size=2, stride=2)
-        self.dropout2 = nn.Dropout(0.25)
-        
-        # Convolutional Block 3
-        self.conv5 = nn.Conv2d(128, 256, kernel_size=3, padding=1)
-        self.bn5 = nn.BatchNorm2d(256)
-        self.conv6 = nn.Conv2d(256, 256, kernel_size=3, padding=1)
-        self.bn6 = nn.BatchNorm2d(256)
-        self.pool3 = nn.MaxPool2d(kernel_size=2, stride=2)
-        self.dropout3 = nn.Dropout(0.25)
-        
-        # Convolutional Block 4
-        self.conv7 = nn.Conv2d(256, 512, kernel_size=3, padding=1)
-        self.bn7 = nn.BatchNorm2d(512)
-        self.pool4 = nn.MaxPool2d(kernel_size=2, stride=2)
-        self.dropout4 = nn.Dropout(0.25)
-        
-        # Fully Connected Layers
+        # Classifier (Fully Connected Layers)
         # After 4 pooling layers: 48x48 -> 24x24 -> 12x12 -> 6x6 -> 3x3
-        self.fc1 = nn.Linear(512 * 3 * 3, 512)
-        self.bn_fc1 = nn.BatchNorm1d(512)
-        self.dropout5 = nn.Dropout(0.5)
-        
-        self.fc2 = nn.Linear(512, 256)
-        self.bn_fc2 = nn.BatchNorm1d(256)
-        self.dropout6 = nn.Dropout(0.5)
-        
-        self.fc3 = nn.Linear(256, num_classes)
+        self.classifier = nn.Sequential(
+            nn.Flatten(),
+            nn.Linear(512 * 3 * 3, 256),  # classifier.1 (outputs 256)
+            nn.ReLU(inplace=True),
+            nn.BatchNorm1d(256),  # classifier.3
+            nn.Dropout(0.5),
+            nn.Linear(256, 512),  # classifier.5 (256 -> 512)
+            nn.ReLU(inplace=True),
+            nn.BatchNorm1d(512),  # classifier.7
+            nn.Dropout(0.5),
+            nn.Linear(512, num_classes),  # classifier.9 (512 -> 7)
+        )
     
     def forward(self, x):
-        # Block 1
-        x = F.relu(self.bn1(self.conv1(x)))
-        x = F.relu(self.bn2(self.conv2(x)))
-        x = self.pool1(x)
-        x = self.dropout1(x)
-        
-        # Block 2
-        x = F.relu(self.bn3(self.conv3(x)))
-        x = F.relu(self.bn4(self.conv4(x)))
-        x = self.pool2(x)
-        x = self.dropout2(x)
-        
-        # Block 3
-        x = F.relu(self.bn5(self.conv5(x)))
-        x = F.relu(self.bn6(self.conv6(x)))
-        x = self.pool3(x)
-        x = self.dropout3(x)
-        
-        # Block 4
-        x = F.relu(self.bn7(self.conv7(x)))
-        x = self.pool4(x)
-        x = self.dropout4(x)
-        
-        # Flatten
-        x = x.view(x.size(0), -1)
-        
-        # FC Layers
-        x = F.relu(self.bn_fc1(self.fc1(x)))
-        x = self.dropout5(x)
-        
-        x = F.relu(self.bn_fc2(self.fc2(x)))
-        x = self.dropout6(x)
-        
-        x = self.fc3(x)
-        
+        x = self.features(x)
+        x = self.classifier(x)
         return x
 
 

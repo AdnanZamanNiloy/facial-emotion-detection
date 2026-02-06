@@ -1,21 +1,43 @@
 /**
- * Main Application Styles
+ * Advanced Professional UI Design System
+ * Modern glassmorphism with sophisticated animations
  */
 
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap');
+
 :root {
+  /* Primary Colors - Vibrant Modern Palette */
   --primary-color: #6366f1;
+  --primary-dark: #4f46e5;
+  --primary-light: #818cf8;
   --secondary-color: #8b5cf6;
+  --accent-color: #06b6d4;
   --success-color: #10b981;
   --danger-color: #ef4444;
   --warning-color: #f59e0b;
-  --background-dark: #0f172a;
-  --background-light: #1e293b;
-  --surface: #334155;
-  --text-primary: #f1f5f9;
-  --text-secondary: #cbd5e1;
-  --border-color: #475569;
-  --shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.3);
-  --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.4);
+  
+  /* Background System */
+  --bg-primary: #0a0e27;
+  --bg-secondary: #111827;
+  --bg-tertiary: #1f2937;
+  
+  /* Glass Effect */
+  --glass-bg: rgba(255, 255, 255, 0.05);
+  --glass-border: rgba(255, 255, 255, 0.1);
+  --glass-shadow: rgba(0, 0, 0, 0.3);
+  
+  /* Text Colors */
+  --text-primary: #f9fafb;
+  --text-secondary: #e5e7eb;
+  --text-muted: #9ca3af;
+  
+  /* Shadows & Glows */
+  --shadow-sm: 0 2px 8px rgba(0, 0, 0, 0.2);
+  --shadow-md: 0 4px 16px rgba(0, 0, 0, 0.3);
+  --shadow-lg: 0 8px 32px rgba(0, 0, 0, 0.4);
+  --shadow-xl: 0 20px 60px rgba(0, 0, 0, 0.5);
+  --glow-primary: 0 0 30px rgba(99, 102, 241, 0.5);
+  --glow-success: 0 0 30px rgba(16, 185, 129, 0.5);
 }
 
 * {
@@ -25,176 +47,366 @@
 }
 
 body {
-  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
-    'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue',
-    sans-serif;
-  background: linear-gradient(135deg, var(--background-dark) 0%, #1e1b4b 100%);
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  background: var(--bg-primary);
   color: var(--text-primary);
   min-height: 100vh;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+  overflow-x: hidden;
+  position: relative;
+}
+
+/* Animated Background */
+body::before {
+  content: '';
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: 
+    radial-gradient(circle at 20% 50%, rgba(99, 102, 241, 0.15) 0%, transparent 50%),
+    radial-gradient(circle at 80% 80%, rgba(139, 92, 246, 0.15) 0%, transparent 50%),
+    radial-gradient(circle at 40% 20%, rgba(6, 182, 212, 0.1) 0%, transparent 50%);
+  animation: backgroundShift 15s ease-in-out infinite;
+  z-index: -1;
+}
+
+@keyframes backgroundShift {
+  0%, 100% { opacity: 1; transform: scale(1); }
+  50% { opacity: 0.8; transform: scale(1.1); }
 }
 
 .app {
   min-height: 100vh;
   display: flex;
   flex-direction: column;
+  position: relative;
 }
 
-/* Header */
+/* Header - Modern Glassmorphism */
 .app-header {
-  background: var(--background-light);
-  padding: 2rem;
-  text-align: center;
-  border-bottom: 2px solid var(--primary-color);
-  box-shadow: var(--shadow);
+  background: rgba(17, 24, 39, 0.8);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  padding: 2.5rem 2rem;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+  box-shadow: var(--shadow-lg);
+  position: relative;
+  overflow: hidden;
+}
+
+.header-content {
+  max-width: 1800px;
+  margin: 0 auto;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 2rem;
+  flex-wrap: wrap;
+}
+
+.header-text {
+  flex: 1;
+  min-width: 300px;
+}
+
+.app-header::before {
+  content: '';
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  width: 100%;
+  height: 3px;
+  background: linear-gradient(90deg, 
+    var(--primary-color) 0%, 
+    var(--secondary-color) 50%, 
+    var(--accent-color) 100%);
+  animation: shimmer 3s ease-in-out infinite;
+}
+
+@keyframes shimmer {
+  0%, 100% { opacity: 0.5; transform: translateX(-100%); }
+  50% { opacity: 1; transform: translateX(100%); }
 }
 
 .app-header h1 {
-  font-size: 2.5rem;
-  font-weight: 700;
-  background: linear-gradient(135deg, var(--primary-color) 0%, var(--secondary-color) 100%);
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  font-size: 3rem;
+  font-weight: 900;
+  background: linear-gradient(135deg, 
+    #6366f1 0%, 
+    #8b5cf6 50%, 
+    #06b6d4 100%);
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
   background-clip: text;
-  margin-bottom: 0.5rem;
+  margin-bottom: 0.75rem;
+  letter-spacing: -0.02em;
+  text-shadow: 0 0 40px rgba(99, 102, 241, 0.3);
+  animation: titleGlow 3s ease-in-out infinite;
+}
+
+@keyframes titleGlow {
+  0%, 100% { filter: brightness(1); }
+  50% { filter: brightness(1.2); }
 }
 
 .app-subtitle {
   color: var(--text-secondary);
-  font-size: 1rem;
+  font-size: 1.1rem;
+  font-weight: 500;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  opacity: 0.9;
 }
 
-/* Main Content */
+/* Main Content - Advanced Grid */
 .app-main {
   flex: 1;
   display: grid;
-  grid-template-columns: 1fr 1fr;
+  grid-template-columns: 1.2fr 1fr;
   gap: 2rem;
-  padding: 2rem;
-  max-width: 1600px;
+  padding: 2.5rem;
+  max-width: 1800px;
   margin: 0 auto;
   width: 100%;
 }
 
+/* Panel - Glassmorphism Card */
 .panel {
-  background: var(--background-light);
-  border-radius: 1rem;
-  padding: 1.5rem;
-  box-shadow: var(--shadow-lg);
-  border: 1px solid var(--border-color);
+  background: var(--glass-bg);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border-radius: 1.5rem;
+  padding: 2rem;
+  box-shadow: var(--shadow-xl);
+  border: 1px solid var(--glass-border);
+  transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+  position: relative;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+.panel::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(135deg, 
+    rgba(99, 102, 241, 0.1) 0%, 
+    transparent 50%);
+  opacity: 0;
+  transition: opacity 0.4s ease;
+}
+
+.panel:hover {
+  transform: translateY(-4px);
+  border-color: rgba(99, 102, 241, 0.3);
+  box-shadow: var(--shadow-xl), var(--glow-primary);
+}
+
+.panel:hover::before {
+  opacity: 1;
 }
 
 .panel h2 {
-  font-size: 1.5rem;
-  margin-bottom: 1.5rem;
+  font-size: 1.75rem;
+  font-weight: 700;
+  margin-bottom: 1.75rem;
   color: var(--text-primary);
   display: flex;
   align-items: center;
-  gap: 0.5rem;
+  gap: 0.75rem;
+  letter-spacing: -0.01em;
+  position: relative;
 }
 
-/* Controls */
+.panel h2::after {
+  content: '';
+  position: absolute;
+  bottom: -0.5rem;
+  left: 0;
+  width: 60px;
+  height: 3px;
+  background: linear-gradient(90deg, var(--primary-color), var(--secondary-color));
+  border-radius: 2px;
+}
+
+/* Controls - Advanced Buttons */
 .controls {
-  margin-top: 1.5rem;
+  margin-top: 2rem;
   display: flex;
   justify-content: center;
-  gap: 1rem;
+  gap: 1.25rem;
+  flex-wrap: wrap;
 }
 
 .btn-control {
-  padding: 1rem 2rem;
-  font-size: 1rem;
-  font-weight: 600;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.75rem;
+  padding: 1.125rem 2.5rem;
+  font-size: 1.05rem;
+  font-weight: 700;
   border: none;
-  border-radius: 0.5rem;
+  border-radius: 1rem;
   cursor: pointer;
-  transition: all 0.3s ease;
-  box-shadow: var(--shadow);
-  min-width: 180px;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  box-shadow: var(--shadow-md);
+  min-width: 200px;
+  position: relative;
+  overflow: hidden;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.btn-control::before {
+  content: '';
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 0;
+  height: 0;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.2);
+  transform: translate(-50%, -50%);
+  transition: width 0.6s, height 0.6s;
+}
+
+.btn-control:hover::before {
+  width: 300px;
+  height: 300px;
 }
 
 .btn-start {
-  background: linear-gradient(135deg, var(--success-color) 0%, #059669 100%);
+  background: linear-gradient(135deg, #10b981 0%, #059669 100%);
   color: white;
+  border: 2px solid rgba(16, 185, 129, 0.3);
 }
 
 .btn-start:hover:not(:disabled) {
-  transform: translateY(-2px);
-  box-shadow: var(--shadow-lg);
+  transform: translateY(-3px) scale(1.02);
+  box-shadow: var(--shadow-lg), var(--glow-success);
+  border-color: rgba(16, 185, 129, 0.6);
 }
 
 .btn-pause {
-  background: linear-gradient(135deg, var(--warning-color) 0%, #d97706 100%);
+  background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%);
   color: white;
+  border: 2px solid rgba(245, 158, 11, 0.3);
 }
 
 .btn-pause:hover:not(:disabled) {
-  transform: translateY(-2px);
-  box-shadow: var(--shadow-lg);
+  transform: translateY(-3px) scale(1.02);
+  box-shadow: var(--shadow-lg), 0 0 30px rgba(245, 158, 11, 0.5);
+  border-color: rgba(245, 158, 11, 0.6);
+}
+
+.btn-control:active:not(:disabled) {
+  transform: translateY(-1px) scale(0.98);
 }
 
 .btn-control:disabled {
-  opacity: 0.5;
+  opacity: 0.4;
   cursor: not-allowed;
+  filter: grayscale(0.5);
 }
 
-/* Footer */
+/* Footer - Modern Design */
 .app-footer {
-  background: var(--background-light);
-  padding: 1.5rem;
+  background: rgba(17, 24, 39, 0.8);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  padding: 2rem;
   text-align: center;
-  border-top: 1px solid var(--border-color);
+  border-top: 1px solid rgba(255, 255, 255, 0.1);
   color: var(--text-secondary);
-  font-size: 0.9rem;
+  font-size: 0.95rem;
 }
 
 .app-footer p {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
   margin: 0.5rem 0;
+  font-weight: 500;
 }
 
 .footer-tech {
-  color: var(--text-secondary);
-  opacity: 0.7;
+  color: var(--text-muted);
+  font-size: 0.875rem;
+  font-weight: 400;
+  margin-top: 0.5rem;
+}
+
+.footer-features {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  color: var(--text-muted);
   font-size: 0.85rem;
+  font-weight: 400;
+  margin-top: 0.75rem;
+  opacity: 0.8;
 }
 
 /* Responsive Design */
 @media (max-width: 1024px) {
   .app-main {
     grid-template-columns: 1fr;
+    padding: 2rem;
   }
   
   .app-header h1 {
-    font-size: 2rem;
+    font-size: 2.25rem;
   }
 }
 
 @media (max-width: 640px) {
   .app-header {
-    padding: 1.5rem 1rem;
+    padding: 2rem 1.25rem;
   }
   
-  .app-header h1 {
-    font-size: 1.5rem;
-  }
-  
-  .app-main {
-    padding: 1rem;
+  .header-content {
+    flex-direction: column;
+    align-items: flex-start;
     gap: 1rem;
   }
   
+  .app-header h1 {
+    font-size: 1.75rem;
+  }
+  
+  .app-subtitle {
+    font-size: 0.9rem;
+  }
+  
+  .app-main {
+    padding: 1.25rem;
+    gap: 1.25rem;
+  }
+  
   .panel {
-    padding: 1rem;
+    padding: 1.5rem;
+    border-radius: 1.25rem;
   }
   
   .panel h2 {
-    font-size: 1.25rem;
+    font-size: 1.35rem;
   }
   
   .btn-control {
-    padding: 0.75rem 1.5rem;
-    font-size: 0.9rem;
-    min-width: 150px;
+    padding: 1rem 2rem;
+    font-size: 0.95rem;
+    min-width: 160px;
   }
 }

@@ -3,6 +3,7 @@
  * Shows connection status and notifications
  */
 import React from 'react';
+import { Wifi, WifiOff, AlertTriangle, Info } from 'lucide-react';
 import '../styles/StatusIndicator.css';
 
 const StatusIndicator = ({ isConnected, error, message }) => {
@@ -10,7 +11,9 @@ const StatusIndicator = ({ isConnected, error, message }) => {
     <div className="status-indicator-container">
       {/* Connection Status */}
       <div className={`connection-status ${isConnected ? 'connected' : 'disconnected'}`}>
-        <span className="status-dot"></span>
+        <span className="status-dot">
+          {isConnected ? <Wifi size={16} /> : <WifiOff size={16} />}
+        </span>
         <span className="status-text">
           {isConnected ? 'Connected to Server' : 'Disconnected'}
         </span>
@@ -19,7 +22,7 @@ const StatusIndicator = ({ isConnected, error, message }) => {
       {/* Error Message */}
       {error && (
         <div className="status-message error">
-          <span className="message-icon">⚠️</span>
+          <span className="message-icon"><AlertTriangle size={18} /></span>
           <span className="message-text">{error}</span>
         </div>
       )}
@@ -27,7 +30,7 @@ const StatusIndicator = ({ isConnected, error, message }) => {
       {/* Info Message */}
       {message && !error && (
         <div className="status-message info">
-          <span className="message-icon">ℹ️</span>
+          <span className="message-icon"><Info size={18} /></span>
           <span className="message-text">{message}</span>
         </div>
       )}

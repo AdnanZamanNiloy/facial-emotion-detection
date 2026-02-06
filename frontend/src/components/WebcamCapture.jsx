@@ -3,13 +3,15 @@
  * Handles webcam access and frame capture
  */
 import React, { useRef, useEffect, useState } from 'react';
+import { AlertTriangle, RefreshCw, Loader } from 'lucide-react';
 import '../styles/WebcamCapture.css';
 
 const CAPTURE_FPS = 8; // Frames per second to send to backend
 const CAPTURE_INTERVAL = 1000 / CAPTURE_FPS; // milliseconds
 
-const WebcamCapture = ({ onFrame, isActive, onError }) => {
-  const videoRef = useRef(null);
+const WebcamCapture = ({ onFrame, isActive, onError, videoRef: externalVideoRef }) => {
+  const internalVideoRef = useRef(null);
+  const videoRef = externalVideoRef || internalVideoRef;
   const canvasRef = useRef(null);
   const streamRef = useRef(null);
   const captureIntervalRef = useRef(null);
@@ -19,7 +21,10 @@ const WebcamCapture = ({ onFrame, isActive, onError }) => {
   // Start webcam
   const startWebcam = async () => {
     try {
-      console.log('Requesting webcam access...');
+      // Check for browser compatibility
+      if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) {
+        throw new Error('Your browser does not support webcam access. Please use a modern browser (Chrome, Firefox, Safari, Edge) over HTTPS.');
+      }
       
       const stream = await navigator.mediaDevices.getUserMedia({
         video: {
@@ -35,7 +40,6 @@ const WebcamCapture = ({ onFrame, isActive, onError }) => {
         streamRef.current = stream;
         setIsWebcamActive(true);
         setErrorMessage(null);
-        console.log('Webcam started successfully');
       }
     } catch (error) {
       console.error('Error accessing webcam:', error);
@@ -66,7 +70,6 @@ const WebcamCapture = ({ onFrame, isActive, onError }) => {
       videoRef.current.srcObject = null;
     }
     setIsWebcamActive(false);
-    console.log('Webcam stopped');
   };
 
   // Capture frame from video and convert to base64
@@ -101,8 +104,6 @@ const WebcamCapture = ({ onFrame, isActive, onError }) => {
     if (captureIntervalRef.current) {
       return;
     }
-
-    console.log(`Starting frame capture at ${CAPTURE_FPS} FPS`);
     
     captureIntervalRef.current = setInterval(() => {
       const frame = captureFrame();
@@ -117,7 +118,6 @@ const WebcamCapture = ({ onFrame, isActive, onError }) => {
     if (captureIntervalRef.current) {
       clearInterval(captureIntervalRef.current);
       captureIntervalRef.current = null;
-      console.log('Frame capture stopped');
     }
   };
 
@@ -132,15 +132,19 @@ const WebcamCapture = ({ onFrame, isActive, onError }) => {
     return () => stopCapture();
   }, [isActive, isWebcamActive]);
 
-  // Cleanup on unmount
+  // Start/stop webcam based on isActive prop
   useEffect(() => {
-    startWebcam();
+    if (isActive) {
+      startWebcam();
+    } else {
+      stopWebcam();
+    }
 
     return () => {
       stopCapture();
       stopWebcam();
     };
-  }, []);
+  }, [isActive]);
 
   return (
     <div className="webcam-container">
@@ -154,14 +158,20 @@ const WebcamCapture = ({ onFrame, isActive, onError }) => {
         />
         {!isWebcamActive && !errorMessage && (
           <div className="webcam-loading">
-            <div className="spinner"></div>
+            <div className="spinner">
+              <Loader size={48} className="spin-animation" />
+            </div>
             <p>Initializing camera...</p>
           </div>
         )}
         {errorMessage && (
           <div className="webcam-error">
-            <p>⚠️ {errorMessage}</p>
+            <p>
+              <AlertTriangle size={20} style={{ marginRight: '8px' }} />
+              {errorMessage}
+            </p>
             <button onClick={startWebcam} className="retry-button">
+              <RefreshCw size={16} />
               Retry
             </button>
           </div>
