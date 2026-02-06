@@ -3,7 +3,7 @@
  * Screenshot, recording, settings, and advanced features
  */
 import React, { useState } from 'react';
-import { Camera, Download, Settings, Trash2, FileJson, X } from 'lucide-react';
+import { Camera, Download, Settings, Trash2, FileJson } from 'lucide-react';
 import '../styles/AdvancedControls.css';
 
 const AdvancedControls = ({ 

@@ -2,7 +2,7 @@
  * WebcamCapture Component
  * Handles webcam access and frame capture
  */
-import React, { useRef, useEffect, useState } from 'react';
+import React, { useRef, useEffect, useState, useCallback } from 'react';
 import { AlertTriangle, RefreshCw, Loader } from 'lucide-react';
 import '../styles/WebcamCapture.css';
 
@@ -19,7 +19,7 @@ const WebcamCapture = ({ onFrame, isActive, onError, videoRef: externalVideoRef 
   const [errorMessage, setErrorMessage] = useState(null);
 
   // Start webcam
-  const startWebcam = async () => {
+  const startWebcam = useCallback(async () => {
     try {
       // Check for browser compatibility
       if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) {
@@ -58,10 +58,10 @@ const WebcamCapture = ({ onFrame, isActive, onError, videoRef: externalVideoRef 
       setErrorMessage(errorMsg);
       if (onError) onError(errorMsg);
     }
-  };
+  }, [videoRef, onError]);
 
   // Stop webcam
-  const stopWebcam = () => {
+  const stopWebcam = useCallback(() => {
     if (streamRef.current) {
       streamRef.current.getTracks().forEach(track => track.stop());
       streamRef.current = null;
@@ -70,10 +70,10 @@ const WebcamCapture = ({ onFrame, isActive, onError, videoRef: externalVideoRef 
       videoRef.current.srcObject = null;
     }
     setIsWebcamActive(false);
-  };
+  }, [videoRef]);
 
   // Capture frame from video and convert to base64
-  const captureFrame = () => {
+  const captureFrame = useCallback(() => {
     if (!videoRef.current || !canvasRef.current || !isActive) {
       return null;
     }
@@ -97,10 +97,10 @@ const WebcamCapture = ({ onFrame, isActive, onError, videoRef: externalVideoRef 
       console.error('Error capturing frame:', error);
       return null;
     }
-  };
+  }, [videoRef, isActive]);
 
   // Start frame capture loop
-  const startCapture = () => {
+  const startCapture = useCallback(() => {
     if (captureIntervalRef.current) {
       return;
     }
@@ -111,15 +111,15 @@ const WebcamCapture = ({ onFrame, isActive, onError, videoRef: externalVideoRef 
         onFrame(frame);
       }
     }, CAPTURE_INTERVAL);
-  };
+  }, [onFrame, captureFrame]);
 
   // Stop frame capture loop
-  const stopCapture = () => {
+  const stopCapture = useCallback(() => {
     if (captureIntervalRef.current) {
       clearInterval(captureIntervalRef.current);
       captureIntervalRef.current = null;
     }
-  };
+  }, []);
 
   // Start/stop capture based on isActive prop
   useEffect(() => {
@@ -130,7 +130,7 @@ const WebcamCapture = ({ onFrame, isActive, onError, videoRef: externalVideoRef 
     }
 
     return () => stopCapture();
-  }, [isActive, isWebcamActive]);
+  }, [isActive, isWebcamActive, startCapture, stopCapture]);
 
   // Start/stop webcam based on isActive prop
   useEffect(() => {
@@ -144,7 +144,7 @@ const WebcamCapture = ({ onFrame, isActive, onError, videoRef: externalVideoRef 
       stopCapture();
       stopWebcam();
     };
-  }, [isActive]);
+  }, [isActive, startWebcam, stopWebcam, stopCapture]);
 
   return (
     <div className="webcam-container">
